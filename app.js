@@ -122,7 +122,7 @@
       : '<p class="empty">No matching people. Try another phrase or reset the filters.</p>';
   }
   const footer = () =>
-    `<footer class="archive-footer"><span>Static reader · original content preserved</span><div><a href="data/workbook.json" download>Full JSON corpus</a><a href="data/manifest.json">Content manifest</a><a href="https://github.com/Divitmehta123/revenue-integrity-interview-atlas" target="_blank" rel="noopener noreferrer">Open-source repository ↗</a></div></footer>`;
+    `<footer class="archive-footer"><span>Original content preserved</span><div><a href="#view=evidence">All sources</a><a href="graphify-out/graph.html">Relationship graph</a><a href="data/Revenue_Integrity_66_Agent_Interviews.xlsx" download>Original workbook</a><a href="data/workbook.json" download>JSON</a><a href="data/manifest.json">Manifest</a><a href="https://github.com/Divitmehta123/revenue-integrity-interview-atlas" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></footer>`;
   const note = () =>
     '<div class="synthetic-note">66 fictional personas. New synthetic interviews. <a href="#view=scope">Read scope & limits</a> before interpreting the answers.</div>';
 
@@ -143,15 +143,13 @@
     const earlier = people[index - 1],
       later = people[index + 1];
     const tabs = [
-      ["interview", "Interview"],
+      ["interview", "Answers"],
       ["verdicts", "Verdicts"],
-      ["profile", "Profile"],
-      ["sources", "Sources"],
-      ["prompts", "Exact prompts"],
+      ["profile", "Context"],
     ];
     return `<div class="person-heading">${avatar(person)}<div><span class="eyebrow">Fictional persona · Agent ${String(person[0]).padStart(2, "0")}</span><h1>${escape(firstName(person))}</h1><p class="role-line">${escape(person[2])} · ${escape(person[3])}</p></div><div class="person-controls"><button class="icon-button" type="button" data-person="${earlier?.[0] ?? ""}" aria-label="Previous person" ${earlier ? "" : "disabled"}>←</button><button class="icon-button" type="button" data-person="${later?.[0] ?? ""}" aria-label="Next person" ${later ? "" : "disabled"}>→</button></div></div>
       <div class="person-meta"><span><strong>12</strong> initial answers</span><span><strong>3</strong> answered follow-ups</span><span><strong>${person[10]}</strong> saved statements supplied</span><span>Eligible rounds <strong>${person[12]}–${person[13]}</strong></span></div>
-      <nav class="tabs" aria-label="${escape(firstName(person))} interview sections">${tabs.map(([key, label]) => `<a href="${personUrl(person[0], key)}" ${key === tab ? 'aria-current="page"' : ""}>${label}</a>`).join("")}</nav>`;
+      <nav class="tabs" aria-label="${escape(firstName(person))} interview sections">${tabs.map(([key, label]) => `<a href="${personUrl(person[0], key)}" ${key === tab || (key === "profile" && ["sources", "prompts"].includes(tab)) ? 'aria-current="page"' : ""}>${label}</a>`).join("")}</nav>${["profile", "sources", "prompts"].includes(tab) ? `<nav class="context-links" aria-label="Context details"><a href="${personUrl(person[0], "profile")}">Profile</a><a href="${personUrl(person[0], "sources")}">Original records</a><a href="${personUrl(person[0], "prompts")}">Exact prompts</a></nav>` : ""}`;
   }
   function supportButtons(ids) {
     return ids
@@ -173,7 +171,7 @@
       .replace(/\.\d+Z$/, " UTC");
   }
   function answerContents(row) {
-    return `<div class="answer-body">${exact(row[8])}<div class="answer-context">${row[4] === "Follow-up" ? `<div class="reason"><span class="field-label">Why this follow-up · parent ${escape(row[6])}</span>${exact(row[12])}</div>` : ""}<div><span class="field-label">Basis</span>${exact(row[9])}${supportButtons(row[10])}</div>${row[11] ? `<div><span class="field-label">Uncertainty</span>${exact(row[11])}</div>` : ""}${row[16] ? `<div class="caution"><span class="field-label">Analyst cautions</span>${exact(row[16])}</div>` : ""}</div><div class="provenance"><span>Model: ${escape(row[13])}</span><span>Reasoning: ${escape(row[14])}</span><span>${escape(utcDate(row[15]))}</span></div></div>`;
+    return `<div class="answer-body">${exact(row[8])}<details class="answer-detail"><summary>Sources & provenance${row[16] ? " · includes cautions" : ""}</summary><div class="answer-context">${row[4] === "Follow-up" ? `<div class="reason"><span class="field-label">Why this follow-up · parent ${escape(row[6])}</span>${exact(row[12])}</div>` : ""}<div><span class="field-label">Basis</span>${exact(row[9])}${supportButtons(row[10])}</div>${row[11] ? `<div><span class="field-label">Uncertainty</span>${exact(row[11])}</div>` : ""}${row[16] ? `<div class="caution"><span class="field-label">Analyst cautions</span>${exact(row[16])}</div>` : ""}</div><div class="provenance"><span>Model: ${escape(row[13])}</span><span>Reasoning: ${escape(row[14])}</span><span>${escape(utcDate(row[15]))}</span></div></details></div>`;
   }
   function answerCard(row, open = false) {
     return `<details class="answer-card ${row[4] === "Follow-up" ? "followup" : ""}" id="answer-${row[5]}" ${open ? "open" : ""}><summary><span class="question-id">${escape(row[5])}</span><span class="answer-question">${escape(row[7])}</span></summary>${answerContents(row)}</details>`;
@@ -182,7 +180,7 @@
     const rows = interviewsByPerson.get(person[0]);
     const initial = rows.filter((r) => r[4] === "Initial");
     const followup = rows.filter((r) => r[4] === "Follow-up");
-    return `<div class="reader-layout"><div><div class="reader-toolbar"><span>Original answers · no rewritten summaries</span><button class="text-button" type="button" id="toggle-answers">Expand all answers</button></div>${initial.map((r, i) => answerCard(r, route.q === r[5] || (!route.q && i === 0))).join("")}<div class="followup-heading"><span class="eyebrow">Adaptive interview</span><h2>Three answered follow-ups</h2><p>The question, its reason, and its parent are preserved.</p></div>${followup.map((r) => answerCard(r, route.q === r[5])).join("")}</div><aside class="reader-rail" aria-label="Jump to a question"><span class="eyebrow">In this interview</span>${rows.map((r) => `<a href="${personUrl(person[0], "interview", r[5])}"><span class="mono">${escape(r[5])}</span>${escape(r[7])}</a>`).join("")}</aside></div>`;
+    return `${note()}<div class="reader-toolbar"><span>12 questions · 3 personal follow-ups</span><button class="text-button" type="button" id="toggle-answers">Expand all answers</button></div>${initial.map((r, i) => answerCard(r, route.q === r[5] || (!route.q && i === 0))).join("")}<div class="followup-heading"><h2>Personal follow-ups</h2><p>Exact questions and answers, with their original reasoning and sources.</p></div>${followup.map((r) => answerCard(r, route.q === r[5])).join("")}`;
   }
   function renderVerdicts(person) {
     const row = verdicts.get(person[0]);
@@ -315,13 +313,21 @@
     const agent = params.get("agent");
     route = {
       view: params.get("view") || "overview",
-      agent: agent !== null && /^\d+$/.test(agent) ? Number(agent) : null,
+      agent:
+        agent !== null && /^\d+$/.test(agent)
+          ? Number(agent)
+          : !params.get("view")
+            ? 0
+            : null,
       tab: params.get("tab"),
       q: params.get("q"),
       kind: params.get("kind"),
     };
     document.querySelectorAll(".primary-nav a").forEach((a) => {
-      if (route.agent === null && a.dataset.view === route.view)
+      if (
+        (route.agent !== null && a.dataset.view === "people") ||
+        (route.agent === null && a.dataset.view === route.view)
+      )
         a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });

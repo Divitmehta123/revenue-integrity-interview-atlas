@@ -1,0 +1,1278 @@
+{
+  "people": [
+    {
+      "id": 0,
+      "name": "Alex (F01 · Principal/owner)",
+      "firm": "F01",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 1,
+      "name": "Priya (F01 · Controller/CFO)",
+      "firm": "F01",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 2,
+      "name": "Jordan (F01 · Project manager)",
+      "firm": "F01",
+      "role": "Project manager"
+    },
+    {
+      "id": 3,
+      "name": "Morgan (F01 · Project accountant/billing staff)",
+      "firm": "F01",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 4,
+      "name": "Sam (F02 · Principal/owner)",
+      "firm": "F02",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 5,
+      "name": "Elena (F02 · Controller/CFO)",
+      "firm": "F02",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 6,
+      "name": "Chris (F02 · Project manager)",
+      "firm": "F02",
+      "role": "Project manager"
+    },
+    {
+      "id": 7,
+      "name": "Maya (F02 · Project accountant/billing staff)",
+      "firm": "F02",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 8,
+      "name": "Taylor (F03 · Principal/owner)",
+      "firm": "F03",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 9,
+      "name": "Noor (F03 · Controller/CFO)",
+      "firm": "F03",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 10,
+      "name": "Jamie (F03 · Project manager)",
+      "firm": "F03",
+      "role": "Project manager"
+    },
+    {
+      "id": 11,
+      "name": "Daniel (F03 · Project accountant/billing staff)",
+      "firm": "F03",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 12,
+      "name": "Casey (F04 · Principal/owner)",
+      "firm": "F04",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 13,
+      "name": "Nina (F04 · Controller/CFO)",
+      "firm": "F04",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 14,
+      "name": "Robin (F04 · Project manager)",
+      "firm": "F04",
+      "role": "Project manager"
+    },
+    {
+      "id": 15,
+      "name": "Omar (F04 · Project accountant/billing staff)",
+      "firm": "F04",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 16,
+      "name": "Drew (F05 · Principal/owner)",
+      "firm": "F05",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 17,
+      "name": "Leila (F05 · Controller/CFO)",
+      "firm": "F05",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 18,
+      "name": "Cameron (F05 · Project manager)",
+      "firm": "F05",
+      "role": "Project manager"
+    },
+    {
+      "id": 19,
+      "name": "Eva (F05 · Project accountant/billing staff)",
+      "firm": "F05",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 20,
+      "name": "Ellis (F06 · Principal/owner)",
+      "firm": "F06",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 21,
+      "name": "Arjun (F06 · Controller/CFO)",
+      "firm": "F06",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 22,
+      "name": "Reese (F06 · Project manager)",
+      "firm": "F06",
+      "role": "Project manager"
+    },
+    {
+      "id": 23,
+      "name": "Ana (F06 · Project accountant/billing staff)",
+      "firm": "F06",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 24,
+      "name": "Devon (F07 · Principal/owner)",
+      "firm": "F07",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 25,
+      "name": "Mila (F07 · Controller/CFO)",
+      "firm": "F07",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 26,
+      "name": "Logan (F07 · Project manager)",
+      "firm": "F07",
+      "role": "Project manager"
+    },
+    {
+      "id": 27,
+      "name": "Sara (F07 · Project accountant/billing staff)",
+      "firm": "F07",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 28,
+      "name": "Avery (F08 · Principal/owner)",
+      "firm": "F08",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 29,
+      "name": "Ben (F08 · Controller/CFO)",
+      "firm": "F08",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 30,
+      "name": "Quinn (F08 · Project manager)",
+      "firm": "F08",
+      "role": "Project manager"
+    },
+    {
+      "id": 31,
+      "name": "Imani (F08 · Project accountant/billing staff)",
+      "firm": "F08",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 32,
+      "name": "Riley (F09 · Principal/owner)",
+      "firm": "F09",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 33,
+      "name": "Theo (F09 · Controller/CFO)",
+      "firm": "F09",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 34,
+      "name": "Blake (F09 · Project manager)",
+      "firm": "F09",
+      "role": "Project manager"
+    },
+    {
+      "id": 35,
+      "name": "Hana (F09 · Project accountant/billing staff)",
+      "firm": "F09",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 36,
+      "name": "Jesse (F10 · Principal/owner)",
+      "firm": "F10",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 37,
+      "name": "Zoe (F10 · Controller/CFO)",
+      "firm": "F10",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 38,
+      "name": "Skyler (F10 · Project manager)",
+      "firm": "F10",
+      "role": "Project manager"
+    },
+    {
+      "id": 39,
+      "name": "Luis (F10 · Project accountant/billing staff)",
+      "firm": "F10",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 40,
+      "name": "Rowan (F11 · Principal/owner)",
+      "firm": "F11",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 41,
+      "name": "Aisha (F11 · Controller/CFO)",
+      "firm": "F11",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 42,
+      "name": "Parker (F11 · Project manager)",
+      "firm": "F11",
+      "role": "Project manager"
+    },
+    {
+      "id": 43,
+      "name": "Mei (F11 · Project accountant/billing staff)",
+      "firm": "F11",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 44,
+      "name": "Spencer (F12 · Principal/owner)",
+      "firm": "F12",
+      "role": "Principal/owner"
+    },
+    {
+      "id": 45,
+      "name": "Iris (F12 · Controller/CFO)",
+      "firm": "F12",
+      "role": "Controller/CFO"
+    },
+    {
+      "id": 46,
+      "name": "Hayden (F12 · Project manager)",
+      "firm": "F12",
+      "role": "Project manager"
+    },
+    {
+      "id": 47,
+      "name": "Sofia (F12 · Project accountant/billing staff)",
+      "firm": "F12",
+      "role": "Project accountant/billing staff"
+    },
+    {
+      "id": 48,
+      "name": "Nikhil (F03 · Technical architect/engineer)",
+      "firm": "F03",
+      "role": "Technical architect/engineer"
+    },
+    {
+      "id": 49,
+      "name": "Grace (F04 · Operations/IT leader)",
+      "firm": "F04",
+      "role": "Operations/IT leader"
+    },
+    {
+      "id": 50,
+      "name": "Marcus (F05 · Technical architect/engineer)",
+      "firm": "F05",
+      "role": "Technical architect/engineer"
+    },
+    {
+      "id": 51,
+      "name": "Fatima (F06 · Operations/IT leader)",
+      "firm": "F06",
+      "role": "Operations/IT leader"
+    },
+    {
+      "id": 52,
+      "name": "Victor (F07 · Technical architect/engineer)",
+      "firm": "F07",
+      "role": "Technical architect/engineer"
+    },
+    {
+      "id": 53,
+      "name": "Chloe (F08 · Operations/IT leader)",
+      "firm": "F08",
+      "role": "Operations/IT leader"
+    },
+    {
+      "id": 54,
+      "name": "Ethan (F09 · Technical architect/engineer)",
+      "firm": "F09",
+      "role": "Technical architect/engineer"
+    },
+    {
+      "id": 55,
+      "name": "Amara (F11 · Operations/IT leader)",
+      "firm": "F11",
+      "role": "Operations/IT leader"
+    },
+    {
+      "id": 56,
+      "name": "Lucia (external · Client-side project manager)",
+      "firm": "External",
+      "role": "Client-side project manager"
+    },
+    {
+      "id": 57,
+      "name": "Felix (external · Client procurement)",
+      "firm": "External",
+      "role": "Client procurement"
+    },
+    {
+      "id": 58,
+      "name": "Dana (external · Client accounts payable)",
+      "firm": "External",
+      "role": "Client accounts payable"
+    },
+    {
+      "id": 59,
+      "name": "Ruth (external · Client-side project manager)",
+      "firm": "External",
+      "role": "Client-side project manager"
+    },
+    {
+      "id": 60,
+      "name": "Oliver (external · Client procurement)",
+      "firm": "External",
+      "role": "Client procurement"
+    },
+    {
+      "id": 61,
+      "name": "Yara (external · Client accounts payable)",
+      "firm": "External",
+      "role": "Client accounts payable"
+    },
+    {
+      "id": 62,
+      "name": "Simon (external · Incumbent product leader)",
+      "firm": "External",
+      "role": "Incumbent product leader"
+    },
+    {
+      "id": 63,
+      "name": "Clara (external · Incumbent product leader)",
+      "firm": "External",
+      "role": "Incumbent product leader"
+    },
+    {
+      "id": 64,
+      "name": "Mateo (external · Incumbent product leader)",
+      "firm": "External",
+      "role": "Incumbent product leader"
+    },
+    {
+      "id": 65,
+      "name": "Wren (external · Incumbent product leader)",
+      "firm": "External",
+      "role": "Incumbent product leader"
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "target": 1,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J7"
+    },
+    {
+      "source": 0,
+      "target": 2,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J7"
+    },
+    {
+      "source": 1,
+      "target": 0,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J8"
+    },
+    {
+      "source": 1,
+      "target": 3,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J8"
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J9"
+    },
+    {
+      "source": 2,
+      "target": 0,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J9"
+    },
+    {
+      "source": 3,
+      "target": 1,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J10"
+    },
+    {
+      "source": 3,
+      "target": 2,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J10"
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J11"
+    },
+    {
+      "source": 4,
+      "target": 6,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J11"
+    },
+    {
+      "source": 5,
+      "target": 4,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J12"
+    },
+    {
+      "source": 5,
+      "target": 7,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J12"
+    },
+    {
+      "source": 6,
+      "target": 7,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J13"
+    },
+    {
+      "source": 6,
+      "target": 4,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J13"
+    },
+    {
+      "source": 6,
+      "target": 26,
+      "description": "Civil PM peers know each other through a fictional professional network; neither sees private files.",
+      "source_cell": "Personas!J13"
+    },
+    {
+      "source": 7,
+      "target": 5,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J14"
+    },
+    {
+      "source": 7,
+      "target": 6,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J14"
+    },
+    {
+      "source": 8,
+      "target": 9,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J15"
+    },
+    {
+      "source": 8,
+      "target": 10,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J15"
+    },
+    {
+      "source": 9,
+      "target": 8,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J16"
+    },
+    {
+      "source": 9,
+      "target": 11,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J16"
+    },
+    {
+      "source": 9,
+      "target": 48,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J16"
+    },
+    {
+      "source": 10,
+      "target": 11,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J17"
+    },
+    {
+      "source": 10,
+      "target": 8,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J17"
+    },
+    {
+      "source": 10,
+      "target": 48,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J17"
+    },
+    {
+      "source": 11,
+      "target": 9,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J18"
+    },
+    {
+      "source": 11,
+      "target": 10,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J18"
+    },
+    {
+      "source": 12,
+      "target": 13,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J19"
+    },
+    {
+      "source": 12,
+      "target": 14,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J19"
+    },
+    {
+      "source": 13,
+      "target": 12,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J20"
+    },
+    {
+      "source": 13,
+      "target": 15,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J20"
+    },
+    {
+      "source": 13,
+      "target": 49,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J20"
+    },
+    {
+      "source": 14,
+      "target": 15,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J21"
+    },
+    {
+      "source": 14,
+      "target": 12,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J21"
+    },
+    {
+      "source": 14,
+      "target": 49,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J21"
+    },
+    {
+      "source": 14,
+      "target": 42,
+      "description": "Structural PM peers occasionally exchange process ideas, not confidential client records.",
+      "source_cell": "Personas!J21"
+    },
+    {
+      "source": 15,
+      "target": 13,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J22"
+    },
+    {
+      "source": 15,
+      "target": 14,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J22"
+    },
+    {
+      "source": 16,
+      "target": 17,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J23"
+    },
+    {
+      "source": 16,
+      "target": 18,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J23"
+    },
+    {
+      "source": 17,
+      "target": 16,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J24"
+    },
+    {
+      "source": 17,
+      "target": 19,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J24"
+    },
+    {
+      "source": 17,
+      "target": 50,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J24"
+    },
+    {
+      "source": 18,
+      "target": 19,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J25"
+    },
+    {
+      "source": 18,
+      "target": 16,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J25"
+    },
+    {
+      "source": 18,
+      "target": 50,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J25"
+    },
+    {
+      "source": 19,
+      "target": 17,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J26"
+    },
+    {
+      "source": 19,
+      "target": 18,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J26"
+    },
+    {
+      "source": 19,
+      "target": 31,
+      "description": "Billing peers have a fictional prior-work contact; different firms' controls remain distinct.",
+      "source_cell": "Personas!J26"
+    },
+    {
+      "source": 20,
+      "target": 21,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J27"
+    },
+    {
+      "source": 20,
+      "target": 22,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J27"
+    },
+    {
+      "source": 20,
+      "target": 57,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J27"
+    },
+    {
+      "source": 21,
+      "target": 20,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J28"
+    },
+    {
+      "source": 21,
+      "target": 23,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J28"
+    },
+    {
+      "source": 21,
+      "target": 51,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J28"
+    },
+    {
+      "source": 22,
+      "target": 23,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J29"
+    },
+    {
+      "source": 22,
+      "target": 20,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J29"
+    },
+    {
+      "source": 22,
+      "target": 51,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J29"
+    },
+    {
+      "source": 22,
+      "target": 56,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J29"
+    },
+    {
+      "source": 23,
+      "target": 21,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J30"
+    },
+    {
+      "source": 23,
+      "target": 22,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J30"
+    },
+    {
+      "source": 23,
+      "target": 58,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J30"
+    },
+    {
+      "source": 24,
+      "target": 25,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J31"
+    },
+    {
+      "source": 24,
+      "target": 26,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J31"
+    },
+    {
+      "source": 24,
+      "target": 60,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J31"
+    },
+    {
+      "source": 25,
+      "target": 24,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J32"
+    },
+    {
+      "source": 25,
+      "target": 27,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J32"
+    },
+    {
+      "source": 25,
+      "target": 52,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J32"
+    },
+    {
+      "source": 26,
+      "target": 27,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J33"
+    },
+    {
+      "source": 26,
+      "target": 24,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J33"
+    },
+    {
+      "source": 26,
+      "target": 52,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J33"
+    },
+    {
+      "source": 26,
+      "target": 6,
+      "description": "Civil PM peers know each other through a fictional professional network; neither sees private files.",
+      "source_cell": "Personas!J33"
+    },
+    {
+      "source": 26,
+      "target": 59,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J33"
+    },
+    {
+      "source": 27,
+      "target": 25,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J34"
+    },
+    {
+      "source": 27,
+      "target": 26,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J34"
+    },
+    {
+      "source": 27,
+      "target": 61,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J34"
+    },
+    {
+      "source": 28,
+      "target": 29,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J35"
+    },
+    {
+      "source": 28,
+      "target": 30,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J35"
+    },
+    {
+      "source": 29,
+      "target": 28,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J36"
+    },
+    {
+      "source": 29,
+      "target": 31,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J36"
+    },
+    {
+      "source": 29,
+      "target": 53,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J36"
+    },
+    {
+      "source": 30,
+      "target": 31,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J37"
+    },
+    {
+      "source": 30,
+      "target": 28,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J37"
+    },
+    {
+      "source": 30,
+      "target": 53,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J37"
+    },
+    {
+      "source": 31,
+      "target": 29,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J38"
+    },
+    {
+      "source": 31,
+      "target": 30,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J38"
+    },
+    {
+      "source": 31,
+      "target": 19,
+      "description": "Billing peers have a fictional prior-work contact; different firms' controls remain distinct.",
+      "source_cell": "Personas!J38"
+    },
+    {
+      "source": 32,
+      "target": 33,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J39"
+    },
+    {
+      "source": 32,
+      "target": 34,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J39"
+    },
+    {
+      "source": 33,
+      "target": 32,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J40"
+    },
+    {
+      "source": 33,
+      "target": 35,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J40"
+    },
+    {
+      "source": 33,
+      "target": 54,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J40"
+    },
+    {
+      "source": 34,
+      "target": 35,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J41"
+    },
+    {
+      "source": 34,
+      "target": 32,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J41"
+    },
+    {
+      "source": 34,
+      "target": 54,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J41"
+    },
+    {
+      "source": 35,
+      "target": 33,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J42"
+    },
+    {
+      "source": 35,
+      "target": 34,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J42"
+    },
+    {
+      "source": 36,
+      "target": 37,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J43"
+    },
+    {
+      "source": 36,
+      "target": 38,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J43"
+    },
+    {
+      "source": 37,
+      "target": 36,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J44"
+    },
+    {
+      "source": 37,
+      "target": 39,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J44"
+    },
+    {
+      "source": 38,
+      "target": 39,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J45"
+    },
+    {
+      "source": 38,
+      "target": 36,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J45"
+    },
+    {
+      "source": 39,
+      "target": 37,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J46"
+    },
+    {
+      "source": 39,
+      "target": 38,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J46"
+    },
+    {
+      "source": 40,
+      "target": 41,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J47"
+    },
+    {
+      "source": 40,
+      "target": 42,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J47"
+    },
+    {
+      "source": 41,
+      "target": 40,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J48"
+    },
+    {
+      "source": 41,
+      "target": 43,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J48"
+    },
+    {
+      "source": 41,
+      "target": 55,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J48"
+    },
+    {
+      "source": 42,
+      "target": 43,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J49"
+    },
+    {
+      "source": 42,
+      "target": 40,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J49"
+    },
+    {
+      "source": 42,
+      "target": 55,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J49"
+    },
+    {
+      "source": 42,
+      "target": 14,
+      "description": "Structural PM peers occasionally exchange process ideas, not confidential client records.",
+      "source_cell": "Personas!J49"
+    },
+    {
+      "source": 43,
+      "target": 41,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J50"
+    },
+    {
+      "source": 43,
+      "target": 42,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J50"
+    },
+    {
+      "source": 44,
+      "target": 45,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J51"
+    },
+    {
+      "source": 44,
+      "target": 46,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J51"
+    },
+    {
+      "source": 45,
+      "target": 44,
+      "description": "Principal and finance lead share budget responsibility; this does not imply agreement.",
+      "source_cell": "Personas!J52"
+    },
+    {
+      "source": 45,
+      "target": 47,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J52"
+    },
+    {
+      "source": 46,
+      "target": 47,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J53"
+    },
+    {
+      "source": 46,
+      "target": 44,
+      "description": "Principal and PM discuss client relationships and project delivery.",
+      "source_cell": "Personas!J53"
+    },
+    {
+      "source": 47,
+      "target": 45,
+      "description": "Finance lead and billing colleague work on invoice controls.",
+      "source_cell": "Personas!J54"
+    },
+    {
+      "source": 47,
+      "target": 46,
+      "description": "PM and billing colleague exchange project approval and draft-invoice queries.",
+      "source_cell": "Personas!J54"
+    },
+    {
+      "source": 48,
+      "target": 10,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J55"
+    },
+    {
+      "source": 48,
+      "target": 9,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J55"
+    },
+    {
+      "source": 49,
+      "target": 14,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J56"
+    },
+    {
+      "source": 49,
+      "target": 13,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J56"
+    },
+    {
+      "source": 50,
+      "target": 18,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J57"
+    },
+    {
+      "source": 50,
+      "target": 17,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J57"
+    },
+    {
+      "source": 51,
+      "target": 22,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J58"
+    },
+    {
+      "source": 51,
+      "target": 21,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J58"
+    },
+    {
+      "source": 52,
+      "target": 26,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J59"
+    },
+    {
+      "source": 52,
+      "target": 25,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J59"
+    },
+    {
+      "source": 53,
+      "target": 30,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J60"
+    },
+    {
+      "source": 53,
+      "target": 29,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J60"
+    },
+    {
+      "source": 54,
+      "target": 34,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J61"
+    },
+    {
+      "source": 54,
+      "target": 33,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J61"
+    },
+    {
+      "source": 55,
+      "target": 42,
+      "description": "Colleagues coordinating project delivery or operational changes.",
+      "source_cell": "Personas!J62"
+    },
+    {
+      "source": 55,
+      "target": 41,
+      "description": "Colleagues who may weigh finance utility against implementation or time-entry burden.",
+      "source_cell": "Personas!J62"
+    },
+    {
+      "source": 56,
+      "target": 22,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J63"
+    },
+    {
+      "source": 57,
+      "target": 20,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J64"
+    },
+    {
+      "source": 58,
+      "target": 23,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J65"
+    },
+    {
+      "source": 59,
+      "target": 26,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J66"
+    },
+    {
+      "source": 60,
+      "target": 24,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J67"
+    },
+    {
+      "source": 61,
+      "target": 27,
+      "description": "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed.",
+      "source_cell": "Personas!J68"
+    }
+  ]
+}

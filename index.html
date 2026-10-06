@@ -19,7 +19,7 @@
     <header class="masthead">
       <a
         class="brand"
-        href="#view=overview"
+        href="#agent=0&tab=interview"
         aria-label="Revenue Integrity interview atlas home"
       >
         <svg viewBox="0 0 36 36" width="36" height="36" aria-hidden="true">
@@ -34,16 +34,15 @@
         <span>Revenue Integrity<small>Interview atlas</small></span>
       </a>
       <nav class="primary-nav" aria-label="Main navigation">
-        <a href="#view=overview" data-view="overview">Overview</a>
-        <a href="#view=questions&q=Q01" data-view="questions">By question</a>
-        <a href="#view=evidence" data-view="evidence">Evidence</a>
-        <a href="#view=scope" data-view="scope">Scope & limits</a>
+        <a href="#agent=0&tab=interview" data-view="people">Interviews</a>
+        <a href="#view=questions&q=Q01" data-view="questions">Compare</a>
+        <a href="#view=scope" data-view="scope">Notes</a>
       </nav>
       <a
         class="download"
-        href="data/Revenue_Integrity_66_Agent_Interviews.xlsx"
+        href="data/Revenue_Integrity_Interview_Atlas_Visual.xlsx"
         download
-        >Original Excel <span aria-hidden="true">↗</span></a
+        >Download Excel <span aria-hidden="true">↓</span></a
       >
     </header>
     <div class="workspace">
@@ -77,18 +76,21 @@
             autocomplete="off"
           />
         </div>
-        <div class="directory-filters">
-          <label
-            >Firm<select id="firm-filter" aria-label="Firm">
-              <option value="">All firms & external</option>
-            </select></label
-          >
-          <label
-            >Role<select id="role-filter" aria-label="Role">
-              <option value="">All roles</option>
-            </select></label
-          >
-        </div>
+        <details class="filter-disclosure">
+          <summary>Filter by firm or role</summary>
+          <div class="directory-filters">
+            <label
+              >Firm<select id="firm-filter" aria-label="Firm">
+                <option value="">All firms & external</option>
+              </select></label
+            >
+            <label
+              >Role<select id="role-filter" aria-label="Role">
+                <option value="">All roles</option>
+              </select></label
+            >
+          </div>
+        </details>
         <div class="list-heading">
           <span id="person-count" aria-live="polite">66 people</span
           ><button id="reset-filters" class="text-button" type="button">

@@ -1,0 +1,3431 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fictional relationships / Revenue Integrity</title>
+    <script
+      src="vendor/vis-network.min.js"
+      integrity="sha384-Ux6phic9PEHJ38YtrijhkzyJ8yQlH8i/+buBR8s3mAZOJrP1gwyvAcIYl3GWtpX1"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #fafafa;
+        color: #202020;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #graph {
+        flex: 1;
+      }
+      #sidebar {
+        width: 280px;
+        background: #ffffff;
+        border-left: 1px solid #dedede;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #search-wrap {
+        padding: 12px;
+        border-bottom: 1px solid #dedede;
+      }
+      #search {
+        width: 100%;
+        background: #fafafa;
+        border: 1px solid #c5c5c5;
+        color: #202020;
+        padding: 7px 10px;
+        border-radius: 0;
+        font-size: 13px;
+        outline: none;
+      }
+      #search:focus {
+        border-color: #4e79a7;
+      }
+      #search-results {
+        max-height: 140px;
+        overflow-y: auto;
+        padding: 4px 12px;
+        border-bottom: 1px solid #dedede;
+        display: none;
+      }
+      .search-item {
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 0;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .search-item:hover {
+        background: #dedede;
+      }
+      #info-panel {
+        padding: 14px;
+        border-bottom: 1px solid #dedede;
+        min-height: 140px;
+      }
+      #info-panel h3 {
+        font-size: 13px;
+        color: #686868;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      #info-content {
+        font-size: 13px;
+        color: #686868;
+        line-height: 1.6;
+      }
+      #info-content .field {
+        margin-bottom: 5px;
+      }
+      #info-content .field b {
+        color: #202020;
+      }
+      #info-content .empty {
+        color: #555;
+        font-style: italic;
+      }
+      .neighbor-link {
+        display: block;
+        padding: 2px 6px;
+        margin: 2px 0;
+        border-radius: 0;
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-left: 3px solid #333;
+      }
+      .neighbor-link:hover {
+        background: #dedede;
+      }
+      #neighbors-list {
+        max-height: 160px;
+        overflow-y: auto;
+        margin-top: 4px;
+      }
+      #legend-wrap {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+      #legend-wrap h3 {
+        font-size: 13px;
+        color: #686868;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        cursor: pointer;
+        border-radius: 0;
+        font-size: 12px;
+      }
+      .legend-item:hover {
+        background: #dedede;
+        padding-left: 4px;
+      }
+      .legend-item.dimmed {
+        opacity: 0.35;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 0;
+        flex-shrink: 0;
+      }
+      .legend-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .legend-count {
+        color: #666;
+        font-size: 11px;
+      }
+      #stats {
+        padding: 10px 14px;
+        border-top: 1px solid #dedede;
+        font-size: 11px;
+        color: #555;
+      }
+      #legend-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 4px 0;
+      }
+      #legend-controls label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        color: #686868;
+        user-select: none;
+      }
+      #legend-controls label:hover {
+        color: #202020;
+      }
+      .legend-cb,
+      #select-all-cb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border: 1.5px solid #c5c5c5;
+        border-radius: 0;
+        background: #fafafa;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .legend-cb:checked,
+      #select-all-cb:checked {
+        background: #4e79a7;
+        border-color: #4e79a7;
+      }
+      .legend-cb:checked::after,
+      #select-all-cb:checked::after {
+        content: "";
+        position: absolute;
+        left: 3.5px;
+        top: 1px;
+        width: 4px;
+        height: 7px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      #select-all-cb:indeterminate {
+        background: #4e79a7;
+        border-color: #4e79a7;
+      }
+      #select-all-cb:indeterminate::after {
+        content: "";
+        position: absolute;
+        left: 2px;
+        top: 5px;
+        width: 8px;
+        height: 2px;
+        background: #fff;
+        border: none;
+        transform: none;
+      }
+
+      #graph {
+        min-width: 0;
+      }
+      #graph-note {
+        position: absolute;
+        top: 16px;
+        left: 20px;
+        font:
+          12px Segoe UI,
+          Arial,
+          sans-serif;
+        max-width: calc(100% - 330px);
+        background: white;
+        padding: 10px;
+        border: 1px solid #dedede;
+        z-index: 2;
+      }
+      #fit-graph {
+        display: block;
+        background: white;
+        border: 1px solid #dedede;
+        padding: 4px 8px;
+        color: #202020;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+      @media (max-width: 700px) {
+        body {
+          flex-direction: column;
+        }
+        #graph {
+          height: 52vh;
+          min-height: 0;
+          max-height: 52vh;
+          flex: 0 0 52vh;
+          overflow: hidden;
+        }
+        #sidebar {
+          width: 100%;
+          flex: 1;
+          min-height: 0;
+          border-left: 0;
+          border-top: 1px solid #dedede;
+        }
+        #graph-note {
+          top: 10px;
+          left: 10px;
+          max-width: calc(100% - 20px);
+        }
+        #info-panel {
+          min-height: auto;
+        }
+        #legend-wrap {
+          min-height: 90px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <div id="graph-note">
+      <a href="../index.html" style="color: #202020">← Interviews</a
+      ><br />Fictional assigned network — not agreement, permissions or
+      demand.<button id="fit-graph" type="button">Fit graph</button>
+    </div>
+    <div id="sidebar">
+      <div id="search-wrap">
+        <input
+          id="search"
+          type="text"
+          placeholder="Search nodes..."
+          autocomplete="off"
+        />
+        <div id="search-results"></div>
+      </div>
+      <div id="info-panel">
+        <h3>Node Info</h3>
+        <div id="info-content">
+          <span class="empty">Click a node to inspect it</span>
+        </div>
+      </div>
+      <div id="legend-wrap">
+        <h3>Communities</h3>
+        <div id="legend-controls">
+          <label
+            ><input
+              type="checkbox"
+              id="select-all-cb"
+              checked
+              onchange="toggleAllCommunities(!this.checked)"
+            />Select All</label
+          >
+        </div>
+        <div id="legend"></div>
+      </div>
+      <div id="stats">66 nodes &middot; 146 edges &middot; 16 communities</div>
+    </div>
+    <script>
+      const RAW_NODES = [
+        {
+          id: "relationships_alex_f01_principal_owner",
+          label: "Alex (F01 \u00b7 Principal/owner)",
+          color: {
+            background: "#9C755F",
+            border: "#9C755F",
+            highlight: { background: "#ffffff", border: "#9C755F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Alex (F01 \u00b7 Principal/owner)",
+          community: 8,
+          community_name: "F01 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_priya_f01_controller_cfo",
+          label: "Priya (F01 \u00b7 Controller/CFO)",
+          color: {
+            background: "#9C755F",
+            border: "#9C755F",
+            highlight: { background: "#ffffff", border: "#9C755F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Priya (F01 \u00b7 Controller/CFO)",
+          community: 8,
+          community_name: "F01 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_jordan_f01_project_manager",
+          label: "Jordan (F01 \u00b7 Project manager)",
+          color: {
+            background: "#9C755F",
+            border: "#9C755F",
+            highlight: { background: "#ffffff", border: "#9C755F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Jordan (F01 \u00b7 Project manager)",
+          community: 8,
+          community_name: "F01 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_morgan_f01_project_accountant_billing_staff",
+          label: "Morgan (F01 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#9C755F",
+            border: "#9C755F",
+            highlight: { background: "#ffffff", border: "#9C755F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Morgan (F01 \u00b7 Project accountant/billing staff)",
+          community: 8,
+          community_name: "F01 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_sam_f02_principal_owner",
+          label: "Sam (F02 \u00b7 Principal/owner)",
+          color: {
+            background: "#BAB0AC",
+            border: "#BAB0AC",
+            highlight: { background: "#ffffff", border: "#BAB0AC" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Sam (F02 \u00b7 Principal/owner)",
+          community: 9,
+          community_name: "F02 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_elena_f02_controller_cfo",
+          label: "Elena (F02 \u00b7 Controller/CFO)",
+          color: {
+            background: "#BAB0AC",
+            border: "#BAB0AC",
+            highlight: { background: "#ffffff", border: "#BAB0AC" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Elena (F02 \u00b7 Controller/CFO)",
+          community: 9,
+          community_name: "F02 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_chris_f02_project_manager",
+          label: "Chris (F02 \u00b7 Project manager)",
+          color: {
+            background: "#BAB0AC",
+            border: "#BAB0AC",
+            highlight: { background: "#ffffff", border: "#BAB0AC" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Chris (F02 \u00b7 Project manager)",
+          community: 9,
+          community_name: "F02 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_maya_f02_project_accountant_billing_staff",
+          label: "Maya (F02 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#BAB0AC",
+            border: "#BAB0AC",
+            highlight: { background: "#ffffff", border: "#BAB0AC" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Maya (F02 \u00b7 Project accountant/billing staff)",
+          community: 9,
+          community_name: "F02 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_taylor_f03_principal_owner",
+          label: "Taylor (F03 \u00b7 Principal/owner)",
+          color: {
+            background: "#FF9DA7",
+            border: "#FF9DA7",
+            highlight: { background: "#ffffff", border: "#FF9DA7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Taylor (F03 \u00b7 Principal/owner)",
+          community: 7,
+          community_name: "F03 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_noor_f03_controller_cfo",
+          label: "Noor (F03 \u00b7 Controller/CFO)",
+          color: {
+            background: "#FF9DA7",
+            border: "#FF9DA7",
+            highlight: { background: "#ffffff", border: "#FF9DA7" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Noor (F03 \u00b7 Controller/CFO)",
+          community: 7,
+          community_name: "F03 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_jamie_f03_project_manager",
+          label: "Jamie (F03 \u00b7 Project manager)",
+          color: {
+            background: "#FF9DA7",
+            border: "#FF9DA7",
+            highlight: { background: "#ffffff", border: "#FF9DA7" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Jamie (F03 \u00b7 Project manager)",
+          community: 7,
+          community_name: "F03 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_daniel_f03_project_accountant_billing_staff",
+          label: "Daniel (F03 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#FF9DA7",
+            border: "#FF9DA7",
+            highlight: { background: "#ffffff", border: "#FF9DA7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Daniel (F03 \u00b7 Project accountant/billing staff)",
+          community: 7,
+          community_name: "F03 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_casey_f04_principal_owner",
+          label: "Casey (F04 \u00b7 Principal/owner)",
+          color: {
+            background: "#B07AA1",
+            border: "#B07AA1",
+            highlight: { background: "#ffffff", border: "#B07AA1" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Casey (F04 \u00b7 Principal/owner)",
+          community: 6,
+          community_name: "F04 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_nina_f04_controller_cfo",
+          label: "Nina (F04 \u00b7 Controller/CFO)",
+          color: {
+            background: "#B07AA1",
+            border: "#B07AA1",
+            highlight: { background: "#ffffff", border: "#B07AA1" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Nina (F04 \u00b7 Controller/CFO)",
+          community: 6,
+          community_name: "F04 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_robin_f04_project_manager",
+          label: "Robin (F04 \u00b7 Project manager)",
+          color: {
+            background: "#B07AA1",
+            border: "#B07AA1",
+            highlight: { background: "#ffffff", border: "#B07AA1" },
+          },
+          size: 34.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Robin (F04 \u00b7 Project manager)",
+          community: 6,
+          community_name: "F04 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 8,
+        },
+        {
+          id: "relationships_omar_f04_project_accountant_billing_staff",
+          label: "Omar (F04 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#B07AA1",
+            border: "#B07AA1",
+            highlight: { background: "#ffffff", border: "#B07AA1" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Omar (F04 \u00b7 Project accountant/billing staff)",
+          community: 6,
+          community_name: "F04 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_drew_f05_principal_owner",
+          label: "Drew (F05 \u00b7 Principal/owner)",
+          color: {
+            background: "#EDC948",
+            border: "#EDC948",
+            highlight: { background: "#ffffff", border: "#EDC948" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Drew (F05 \u00b7 Principal/owner)",
+          community: 5,
+          community_name: "F05 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_leila_f05_controller_cfo",
+          label: "Leila (F05 \u00b7 Controller/CFO)",
+          color: {
+            background: "#EDC948",
+            border: "#EDC948",
+            highlight: { background: "#ffffff", border: "#EDC948" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Leila (F05 \u00b7 Controller/CFO)",
+          community: 5,
+          community_name: "F05 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_cameron_f05_project_manager",
+          label: "Cameron (F05 \u00b7 Project manager)",
+          color: {
+            background: "#EDC948",
+            border: "#EDC948",
+            highlight: { background: "#ffffff", border: "#EDC948" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Cameron (F05 \u00b7 Project manager)",
+          community: 5,
+          community_name: "F05 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_eva_f05_project_accountant_billing_staff",
+          label: "Eva (F05 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#EDC948",
+            border: "#EDC948",
+            highlight: { background: "#ffffff", border: "#EDC948" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Eva (F05 \u00b7 Project accountant/billing staff)",
+          community: 5,
+          community_name: "F05 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_ellis_f06_principal_owner",
+          label: "Ellis (F06 \u00b7 Principal/owner)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Ellis (F06 \u00b7 Principal/owner)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_arjun_f06_controller_cfo",
+          label: "Arjun (F06 \u00b7 Controller/CFO)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Arjun (F06 \u00b7 Controller/CFO)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_reese_f06_project_manager",
+          label: "Reese (F06 \u00b7 Project manager)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 34.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Reese (F06 \u00b7 Project manager)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 8,
+        },
+        {
+          id: "relationships_ana_f06_project_accountant_billing_staff",
+          label: "Ana (F06 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Ana (F06 \u00b7 Project accountant/billing staff)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_devon_f07_principal_owner",
+          label: "Devon (F07 \u00b7 Principal/owner)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Devon (F07 \u00b7 Principal/owner)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_mila_f07_controller_cfo",
+          label: "Mila (F07 \u00b7 Controller/CFO)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Mila (F07 \u00b7 Controller/CFO)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_logan_f07_project_manager",
+          label: "Logan (F07 \u00b7 Project manager)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 40.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Logan (F07 \u00b7 Project manager)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 10,
+        },
+        {
+          id: "relationships_sara_f07_project_accountant_billing_staff",
+          label: "Sara (F07 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Sara (F07 \u00b7 Project accountant/billing staff)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_avery_f08_principal_owner",
+          label: "Avery (F08 \u00b7 Principal/owner)",
+          color: {
+            background: "#76B7B2",
+            border: "#76B7B2",
+            highlight: { background: "#ffffff", border: "#76B7B2" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Avery (F08 \u00b7 Principal/owner)",
+          community: 3,
+          community_name: "F08 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_ben_f08_controller_cfo",
+          label: "Ben (F08 \u00b7 Controller/CFO)",
+          color: {
+            background: "#76B7B2",
+            border: "#76B7B2",
+            highlight: { background: "#ffffff", border: "#76B7B2" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Ben (F08 \u00b7 Controller/CFO)",
+          community: 3,
+          community_name: "F08 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_quinn_f08_project_manager",
+          label: "Quinn (F08 \u00b7 Project manager)",
+          color: {
+            background: "#76B7B2",
+            border: "#76B7B2",
+            highlight: { background: "#ffffff", border: "#76B7B2" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Quinn (F08 \u00b7 Project manager)",
+          community: 3,
+          community_name: "F08 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_imani_f08_project_accountant_billing_staff",
+          label: "Imani (F08 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#76B7B2",
+            border: "#76B7B2",
+            highlight: { background: "#ffffff", border: "#76B7B2" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Imani (F08 \u00b7 Project accountant/billing staff)",
+          community: 3,
+          community_name: "F08 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_riley_f09_principal_owner",
+          label: "Riley (F09 \u00b7 Principal/owner)",
+          color: {
+            background: "#59A14F",
+            border: "#59A14F",
+            highlight: { background: "#ffffff", border: "#59A14F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Riley (F09 \u00b7 Principal/owner)",
+          community: 4,
+          community_name: "F09 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_theo_f09_controller_cfo",
+          label: "Theo (F09 \u00b7 Controller/CFO)",
+          color: {
+            background: "#59A14F",
+            border: "#59A14F",
+            highlight: { background: "#ffffff", border: "#59A14F" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Theo (F09 \u00b7 Controller/CFO)",
+          community: 4,
+          community_name: "F09 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_blake_f09_project_manager",
+          label: "Blake (F09 \u00b7 Project manager)",
+          color: {
+            background: "#59A14F",
+            border: "#59A14F",
+            highlight: { background: "#ffffff", border: "#59A14F" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Blake (F09 \u00b7 Project manager)",
+          community: 4,
+          community_name: "F09 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_hana_f09_project_accountant_billing_staff",
+          label: "Hana (F09 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#59A14F",
+            border: "#59A14F",
+            highlight: { background: "#ffffff", border: "#59A14F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Hana (F09 \u00b7 Project accountant/billing staff)",
+          community: 4,
+          community_name: "F09 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_jesse_f10_principal_owner",
+          label: "Jesse (F10 \u00b7 Principal/owner)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Jesse (F10 \u00b7 Principal/owner)",
+          community: 11,
+          community_name: "F10 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_zoe_f10_controller_cfo",
+          label: "Zoe (F10 \u00b7 Controller/CFO)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Zoe (F10 \u00b7 Controller/CFO)",
+          community: 11,
+          community_name: "F10 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_skyler_f10_project_manager",
+          label: "Skyler (F10 \u00b7 Project manager)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Skyler (F10 \u00b7 Project manager)",
+          community: 11,
+          community_name: "F10 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_luis_f10_project_accountant_billing_staff",
+          label: "Luis (F10 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Luis (F10 \u00b7 Project accountant/billing staff)",
+          community: 11,
+          community_name: "F10 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_rowan_f11_principal_owner",
+          label: "Rowan (F11 \u00b7 Principal/owner)",
+          color: {
+            background: "#E15759",
+            border: "#E15759",
+            highlight: { background: "#ffffff", border: "#E15759" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Rowan (F11 \u00b7 Principal/owner)",
+          community: 2,
+          community_name: "F11 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_aisha_f11_controller_cfo",
+          label: "Aisha (F11 \u00b7 Controller/CFO)",
+          color: {
+            background: "#E15759",
+            border: "#E15759",
+            highlight: { background: "#ffffff", border: "#E15759" },
+          },
+          size: 28.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Aisha (F11 \u00b7 Controller/CFO)",
+          community: 2,
+          community_name: "F11 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 6,
+        },
+        {
+          id: "relationships_parker_f11_project_manager",
+          label: "Parker (F11 \u00b7 Project manager)",
+          color: {
+            background: "#E15759",
+            border: "#E15759",
+            highlight: { background: "#ffffff", border: "#E15759" },
+          },
+          size: 34.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Parker (F11 \u00b7 Project manager)",
+          community: 2,
+          community_name: "F11 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 8,
+        },
+        {
+          id: "relationships_mei_f11_project_accountant_billing_staff",
+          label: "Mei (F11 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#E15759",
+            border: "#E15759",
+            highlight: { background: "#ffffff", border: "#E15759" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Mei (F11 \u00b7 Project accountant/billing staff)",
+          community: 2,
+          community_name: "F11 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_spencer_f12_principal_owner",
+          label: "Spencer (F12 \u00b7 Principal/owner)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Spencer (F12 \u00b7 Principal/owner)",
+          community: 10,
+          community_name: "F12 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_iris_f12_controller_cfo",
+          label: "Iris (F12 \u00b7 Controller/CFO)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Iris (F12 \u00b7 Controller/CFO)",
+          community: 10,
+          community_name: "F12 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_hayden_f12_project_manager",
+          label: "Hayden (F12 \u00b7 Project manager)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Hayden (F12 \u00b7 Project manager)",
+          community: 10,
+          community_name: "F12 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_sofia_f12_project_accountant_billing_staff",
+          label: "Sofia (F12 \u00b7 Project accountant/billing staff)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Sofia (F12 \u00b7 Project accountant/billing staff)",
+          community: 10,
+          community_name: "F12 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_nikhil_f03_technical_architect_engineer",
+          label: "Nikhil (F03 \u00b7 Technical architect/engineer)",
+          color: {
+            background: "#FF9DA7",
+            border: "#FF9DA7",
+            highlight: { background: "#ffffff", border: "#FF9DA7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Nikhil (F03 \u00b7 Technical architect/engineer)",
+          community: 7,
+          community_name: "F03 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_grace_f04_operations_it_leader",
+          label: "Grace (F04 \u00b7 Operations/IT leader)",
+          color: {
+            background: "#B07AA1",
+            border: "#B07AA1",
+            highlight: { background: "#ffffff", border: "#B07AA1" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Grace (F04 \u00b7 Operations/IT leader)",
+          community: 6,
+          community_name: "F04 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_marcus_f05_technical_architect_engineer",
+          label: "Marcus (F05 \u00b7 Technical architect/engineer)",
+          color: {
+            background: "#EDC948",
+            border: "#EDC948",
+            highlight: { background: "#ffffff", border: "#EDC948" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Marcus (F05 \u00b7 Technical architect/engineer)",
+          community: 5,
+          community_name: "F05 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_fatima_f06_operations_it_leader",
+          label: "Fatima (F06 \u00b7 Operations/IT leader)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Fatima (F06 \u00b7 Operations/IT leader)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_victor_f07_technical_architect_engineer",
+          label: "Victor (F07 \u00b7 Technical architect/engineer)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Victor (F07 \u00b7 Technical architect/engineer)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_chloe_f08_operations_it_leader",
+          label: "Chloe (F08 \u00b7 Operations/IT leader)",
+          color: {
+            background: "#76B7B2",
+            border: "#76B7B2",
+            highlight: { background: "#ffffff", border: "#76B7B2" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Chloe (F08 \u00b7 Operations/IT leader)",
+          community: 3,
+          community_name: "F08 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_ethan_f09_technical_architect_engineer",
+          label: "Ethan (F09 \u00b7 Technical architect/engineer)",
+          color: {
+            background: "#59A14F",
+            border: "#59A14F",
+            highlight: { background: "#ffffff", border: "#59A14F" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Ethan (F09 \u00b7 Technical architect/engineer)",
+          community: 4,
+          community_name: "F09 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_amara_f11_operations_it_leader",
+          label: "Amara (F11 \u00b7 Operations/IT leader)",
+          color: {
+            background: "#E15759",
+            border: "#E15759",
+            highlight: { background: "#ffffff", border: "#E15759" },
+          },
+          size: 22.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Amara (F11 \u00b7 Operations/IT leader)",
+          community: 2,
+          community_name: "F11 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 4,
+        },
+        {
+          id: "relationships_lucia_external_client_side_project_manager",
+          label: "Lucia (external \u00b7 Client-side project manager)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 16.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Lucia (external \u00b7 Client-side project manager)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 2,
+        },
+        {
+          id: "relationships_felix_external_client_procurement",
+          label: "Felix (external \u00b7 Client procurement)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 16.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Felix (external \u00b7 Client procurement)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 2,
+        },
+        {
+          id: "relationships_dana_external_client_accounts_payable",
+          label: "Dana (external \u00b7 Client accounts payable)",
+          color: {
+            background: "#4E79A7",
+            border: "#4E79A7",
+            highlight: { background: "#ffffff", border: "#4E79A7" },
+          },
+          size: 16.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Dana (external \u00b7 Client accounts payable)",
+          community: 0,
+          community_name: "External / F06 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 2,
+        },
+        {
+          id: "relationships_ruth_external_client_side_project_manager",
+          label: "Ruth (external \u00b7 Client-side project manager)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 16.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Ruth (external \u00b7 Client-side project manager)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 2,
+        },
+        {
+          id: "relationships_oliver_external_client_procurement",
+          label: "Oliver (external \u00b7 Client procurement)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 16.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Oliver (external \u00b7 Client procurement)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 2,
+        },
+        {
+          id: "relationships_yara_external_client_accounts_payable",
+          label: "Yara (external \u00b7 Client accounts payable)",
+          color: {
+            background: "#F28E2B",
+            border: "#F28E2B",
+            highlight: { background: "#ffffff", border: "#F28E2B" },
+          },
+          size: 16.0,
+          font: { size: 12, color: "#ffffff" },
+          title: "Yara (external \u00b7 Client accounts payable)",
+          community: 1,
+          community_name: "External / F07 colleagues",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 2,
+        },
+        {
+          id: "relationships_simon_external_incumbent_product_leader",
+          label: "Simon (external \u00b7 Incumbent product leader)",
+          color: {
+            background: "#59A14F",
+            border: "#59A14F",
+            highlight: { background: "#ffffff", border: "#59A14F" },
+          },
+          size: 10.0,
+          font: { size: 0, color: "#ffffff" },
+          title: "Simon (external \u00b7 Incumbent product leader)",
+          community: 14,
+          community_name: "Unconnected persona",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 0,
+        },
+        {
+          id: "relationships_clara_external_incumbent_product_leader",
+          label: "Clara (external \u00b7 Incumbent product leader)",
+          color: {
+            background: "#E15759",
+            border: "#E15759",
+            highlight: { background: "#ffffff", border: "#E15759" },
+          },
+          size: 10.0,
+          font: { size: 0, color: "#ffffff" },
+          title: "Clara (external \u00b7 Incumbent product leader)",
+          community: 12,
+          community_name: "Unconnected persona",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 0,
+        },
+        {
+          id: "relationships_mateo_external_incumbent_product_leader",
+          label: "Mateo (external \u00b7 Incumbent product leader)",
+          color: {
+            background: "#76B7B2",
+            border: "#76B7B2",
+            highlight: { background: "#ffffff", border: "#76B7B2" },
+          },
+          size: 10.0,
+          font: { size: 0, color: "#ffffff" },
+          title: "Mateo (external \u00b7 Incumbent product leader)",
+          community: 13,
+          community_name: "Unconnected persona",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 0,
+        },
+        {
+          id: "relationships_wren_external_incumbent_product_leader",
+          label: "Wren (external \u00b7 Incumbent product leader)",
+          color: {
+            background: "#EDC948",
+            border: "#EDC948",
+            highlight: { background: "#ffffff", border: "#EDC948" },
+          },
+          size: 10.0,
+          font: { size: 0, color: "#ffffff" },
+          title: "Wren (external \u00b7 Incumbent product leader)",
+          community: 15,
+          community_name: "Unconnected persona",
+          source_file: "relationships.md",
+          file_type: "document",
+          degree: 0,
+        },
+      ];
+      const RAW_EDGES = [
+        {
+          from: "relationships_alex_f01_principal_owner",
+          to: "relationships_jordan_f01_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J7 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_alex_f01_principal_owner",
+          to: "relationships_priya_f01_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J7 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_priya_f01_controller_cfo",
+          to: "relationships_alex_f01_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J8 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_priya_f01_controller_cfo",
+          to: "relationships_morgan_f01_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J8 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jordan_f01_project_manager",
+          to: "relationships_alex_f01_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J9 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jordan_f01_project_manager",
+          to: "relationships_morgan_f01_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J9 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_morgan_f01_project_accountant_billing_staff",
+          to: "relationships_jordan_f01_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J10 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_morgan_f01_project_accountant_billing_staff",
+          to: "relationships_priya_f01_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J10 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sam_f02_principal_owner",
+          to: "relationships_chris_f02_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J11 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sam_f02_principal_owner",
+          to: "relationships_elena_f02_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J11 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_elena_f02_controller_cfo",
+          to: "relationships_maya_f02_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J12 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_elena_f02_controller_cfo",
+          to: "relationships_sam_f02_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J12 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_chris_f02_project_manager",
+          to: "relationships_logan_f07_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Civil PM peers know each other through a fictional professional network; neither sees private files. — Personas!J13 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_chris_f02_project_manager",
+          to: "relationships_maya_f02_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J13 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_chris_f02_project_manager",
+          to: "relationships_sam_f02_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J13 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_maya_f02_project_accountant_billing_staff",
+          to: "relationships_chris_f02_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J14 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_maya_f02_project_accountant_billing_staff",
+          to: "relationships_elena_f02_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J14 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_taylor_f03_principal_owner",
+          to: "relationships_jamie_f03_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J15 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_taylor_f03_principal_owner",
+          to: "relationships_noor_f03_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J15 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_noor_f03_controller_cfo",
+          to: "relationships_daniel_f03_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J16 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_noor_f03_controller_cfo",
+          to: "relationships_nikhil_f03_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J16 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_noor_f03_controller_cfo",
+          to: "relationships_taylor_f03_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J16 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jamie_f03_project_manager",
+          to: "relationships_daniel_f03_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J17 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jamie_f03_project_manager",
+          to: "relationships_nikhil_f03_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J17 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jamie_f03_project_manager",
+          to: "relationships_taylor_f03_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J17 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_daniel_f03_project_accountant_billing_staff",
+          to: "relationships_jamie_f03_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J18 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_daniel_f03_project_accountant_billing_staff",
+          to: "relationships_noor_f03_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J18 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_casey_f04_principal_owner",
+          to: "relationships_nina_f04_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J19 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_casey_f04_principal_owner",
+          to: "relationships_robin_f04_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J19 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_nina_f04_controller_cfo",
+          to: "relationships_casey_f04_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J20 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_nina_f04_controller_cfo",
+          to: "relationships_grace_f04_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J20 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_nina_f04_controller_cfo",
+          to: "relationships_omar_f04_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J20 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_robin_f04_project_manager",
+          to: "relationships_casey_f04_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J21 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_robin_f04_project_manager",
+          to: "relationships_grace_f04_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J21 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_robin_f04_project_manager",
+          to: "relationships_omar_f04_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J21 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_robin_f04_project_manager",
+          to: "relationships_parker_f11_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Structural PM peers occasionally exchange process ideas, not confidential client records. — Personas!J21 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_omar_f04_project_accountant_billing_staff",
+          to: "relationships_nina_f04_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J22 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_omar_f04_project_accountant_billing_staff",
+          to: "relationships_robin_f04_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J22 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_drew_f05_principal_owner",
+          to: "relationships_cameron_f05_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J23 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_drew_f05_principal_owner",
+          to: "relationships_leila_f05_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J23 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_leila_f05_controller_cfo",
+          to: "relationships_drew_f05_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J24 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_leila_f05_controller_cfo",
+          to: "relationships_eva_f05_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J24 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_leila_f05_controller_cfo",
+          to: "relationships_marcus_f05_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J24 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_cameron_f05_project_manager",
+          to: "relationships_drew_f05_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J25 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_cameron_f05_project_manager",
+          to: "relationships_eva_f05_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J25 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_cameron_f05_project_manager",
+          to: "relationships_marcus_f05_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J25 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_eva_f05_project_accountant_billing_staff",
+          to: "relationships_cameron_f05_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J26 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_eva_f05_project_accountant_billing_staff",
+          to: "relationships_imani_f08_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Billing peers have a fictional prior-work contact; different firms' controls remain distinct. — Personas!J26 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_eva_f05_project_accountant_billing_staff",
+          to: "relationships_leila_f05_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J26 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ellis_f06_principal_owner",
+          to: "relationships_arjun_f06_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J27 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ellis_f06_principal_owner",
+          to: "relationships_felix_external_client_procurement",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J27 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ellis_f06_principal_owner",
+          to: "relationships_reese_f06_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J27 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_arjun_f06_controller_cfo",
+          to: "relationships_ana_f06_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J28 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_arjun_f06_controller_cfo",
+          to: "relationships_ellis_f06_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J28 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_arjun_f06_controller_cfo",
+          to: "relationships_fatima_f06_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J28 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_reese_f06_project_manager",
+          to: "relationships_ana_f06_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J29 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_reese_f06_project_manager",
+          to: "relationships_ellis_f06_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J29 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_reese_f06_project_manager",
+          to: "relationships_fatima_f06_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J29 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_reese_f06_project_manager",
+          to: "relationships_lucia_external_client_side_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J29 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ana_f06_project_accountant_billing_staff",
+          to: "relationships_arjun_f06_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J30 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ana_f06_project_accountant_billing_staff",
+          to: "relationships_dana_external_client_accounts_payable",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J30 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ana_f06_project_accountant_billing_staff",
+          to: "relationships_reese_f06_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J30 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_devon_f07_principal_owner",
+          to: "relationships_logan_f07_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J31 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_devon_f07_principal_owner",
+          to: "relationships_mila_f07_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J31 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_devon_f07_principal_owner",
+          to: "relationships_oliver_external_client_procurement",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J31 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_mila_f07_controller_cfo",
+          to: "relationships_devon_f07_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J32 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_mila_f07_controller_cfo",
+          to: "relationships_sara_f07_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J32 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_mila_f07_controller_cfo",
+          to: "relationships_victor_f07_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J32 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_logan_f07_project_manager",
+          to: "relationships_chris_f02_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Civil PM peers know each other through a fictional professional network; neither sees private files. — Personas!J33 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_logan_f07_project_manager",
+          to: "relationships_devon_f07_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J33 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_logan_f07_project_manager",
+          to: "relationships_ruth_external_client_side_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J33 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_logan_f07_project_manager",
+          to: "relationships_sara_f07_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J33 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_logan_f07_project_manager",
+          to: "relationships_victor_f07_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J33 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sara_f07_project_accountant_billing_staff",
+          to: "relationships_logan_f07_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J34 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sara_f07_project_accountant_billing_staff",
+          to: "relationships_mila_f07_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J34 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sara_f07_project_accountant_billing_staff",
+          to: "relationships_yara_external_client_accounts_payable",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J34 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_avery_f08_principal_owner",
+          to: "relationships_ben_f08_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J35 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_avery_f08_principal_owner",
+          to: "relationships_quinn_f08_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J35 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ben_f08_controller_cfo",
+          to: "relationships_avery_f08_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J36 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ben_f08_controller_cfo",
+          to: "relationships_chloe_f08_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J36 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ben_f08_controller_cfo",
+          to: "relationships_imani_f08_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J36 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_quinn_f08_project_manager",
+          to: "relationships_avery_f08_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J37 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_quinn_f08_project_manager",
+          to: "relationships_chloe_f08_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J37 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_quinn_f08_project_manager",
+          to: "relationships_imani_f08_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J37 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_imani_f08_project_accountant_billing_staff",
+          to: "relationships_ben_f08_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J38 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_imani_f08_project_accountant_billing_staff",
+          to: "relationships_eva_f05_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Billing peers have a fictional prior-work contact; different firms' controls remain distinct. — Personas!J38 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_imani_f08_project_accountant_billing_staff",
+          to: "relationships_quinn_f08_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J38 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_riley_f09_principal_owner",
+          to: "relationships_blake_f09_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J39 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_riley_f09_principal_owner",
+          to: "relationships_theo_f09_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J39 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_theo_f09_controller_cfo",
+          to: "relationships_ethan_f09_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J40 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_theo_f09_controller_cfo",
+          to: "relationships_hana_f09_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J40 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_theo_f09_controller_cfo",
+          to: "relationships_riley_f09_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J40 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_blake_f09_project_manager",
+          to: "relationships_ethan_f09_technical_architect_engineer",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J41 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_blake_f09_project_manager",
+          to: "relationships_hana_f09_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J41 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_blake_f09_project_manager",
+          to: "relationships_riley_f09_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J41 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_hana_f09_project_accountant_billing_staff",
+          to: "relationships_blake_f09_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J42 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_hana_f09_project_accountant_billing_staff",
+          to: "relationships_theo_f09_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J42 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jesse_f10_principal_owner",
+          to: "relationships_skyler_f10_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J43 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_jesse_f10_principal_owner",
+          to: "relationships_zoe_f10_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J43 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_zoe_f10_controller_cfo",
+          to: "relationships_jesse_f10_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J44 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_zoe_f10_controller_cfo",
+          to: "relationships_luis_f10_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J44 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_skyler_f10_project_manager",
+          to: "relationships_jesse_f10_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J45 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_skyler_f10_project_manager",
+          to: "relationships_luis_f10_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J45 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_luis_f10_project_accountant_billing_staff",
+          to: "relationships_skyler_f10_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J46 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_luis_f10_project_accountant_billing_staff",
+          to: "relationships_zoe_f10_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J46 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_rowan_f11_principal_owner",
+          to: "relationships_aisha_f11_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J47 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_rowan_f11_principal_owner",
+          to: "relationships_parker_f11_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J47 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_aisha_f11_controller_cfo",
+          to: "relationships_amara_f11_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J48 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_aisha_f11_controller_cfo",
+          to: "relationships_mei_f11_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J48 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_aisha_f11_controller_cfo",
+          to: "relationships_rowan_f11_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J48 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_parker_f11_project_manager",
+          to: "relationships_amara_f11_operations_it_leader",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J49 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_parker_f11_project_manager",
+          to: "relationships_mei_f11_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J49 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_parker_f11_project_manager",
+          to: "relationships_robin_f04_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Structural PM peers occasionally exchange process ideas, not confidential client records. — Personas!J49 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_parker_f11_project_manager",
+          to: "relationships_rowan_f11_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J49 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_mei_f11_project_accountant_billing_staff",
+          to: "relationships_aisha_f11_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J50 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_mei_f11_project_accountant_billing_staff",
+          to: "relationships_parker_f11_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J50 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_spencer_f12_principal_owner",
+          to: "relationships_hayden_f12_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J51 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_spencer_f12_principal_owner",
+          to: "relationships_iris_f12_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J51 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_iris_f12_controller_cfo",
+          to: "relationships_sofia_f12_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J52 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_iris_f12_controller_cfo",
+          to: "relationships_spencer_f12_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and finance lead share budget responsibility; this does not imply agreement. — Personas!J52 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_hayden_f12_project_manager",
+          to: "relationships_sofia_f12_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J53 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_hayden_f12_project_manager",
+          to: "relationships_spencer_f12_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Principal and PM discuss client relationships and project delivery. — Personas!J53 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sofia_f12_project_accountant_billing_staff",
+          to: "relationships_hayden_f12_project_manager",
+          label: "assigned_relationship",
+          title:
+            "PM and billing colleague exchange project approval and draft-invoice queries. — Personas!J54 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_sofia_f12_project_accountant_billing_staff",
+          to: "relationships_iris_f12_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Finance lead and billing colleague work on invoice controls. — Personas!J54 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_nikhil_f03_technical_architect_engineer",
+          to: "relationships_jamie_f03_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J55 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_nikhil_f03_technical_architect_engineer",
+          to: "relationships_noor_f03_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J55 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_grace_f04_operations_it_leader",
+          to: "relationships_nina_f04_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J56 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_grace_f04_operations_it_leader",
+          to: "relationships_robin_f04_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J56 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_marcus_f05_technical_architect_engineer",
+          to: "relationships_cameron_f05_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J57 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_marcus_f05_technical_architect_engineer",
+          to: "relationships_leila_f05_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J57 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_fatima_f06_operations_it_leader",
+          to: "relationships_arjun_f06_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J58 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_fatima_f06_operations_it_leader",
+          to: "relationships_reese_f06_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J58 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_victor_f07_technical_architect_engineer",
+          to: "relationships_logan_f07_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J59 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_victor_f07_technical_architect_engineer",
+          to: "relationships_mila_f07_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J59 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_chloe_f08_operations_it_leader",
+          to: "relationships_ben_f08_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J60 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_chloe_f08_operations_it_leader",
+          to: "relationships_quinn_f08_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J60 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ethan_f09_technical_architect_engineer",
+          to: "relationships_blake_f09_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J61 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ethan_f09_technical_architect_engineer",
+          to: "relationships_theo_f09_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J61 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_amara_f11_operations_it_leader",
+          to: "relationships_aisha_f11_controller_cfo",
+          label: "assigned_relationship",
+          title:
+            "Colleagues who may weigh finance utility against implementation or time-entry burden. — Personas!J62 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_amara_f11_operations_it_leader",
+          to: "relationships_parker_f11_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Colleagues coordinating project delivery or operational changes. — Personas!J62 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_lucia_external_client_side_project_manager",
+          to: "relationships_reese_f06_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J63 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_felix_external_client_procurement",
+          to: "relationships_ellis_f06_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J64 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_dana_external_client_accounts_payable",
+          to: "relationships_ana_f06_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J65 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_ruth_external_client_side_project_manager",
+          to: "relationships_logan_f07_project_manager",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J66 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_oliver_external_client_procurement",
+          to: "relationships_devon_f07_principal_owner",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J67 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+        {
+          from: "relationships_yara_external_client_accounts_payable",
+          to: "relationships_sara_f07_project_accountant_billing_staff",
+          label: "assigned_relationship",
+          title:
+            "Scenario client-consultant working counterpart on a fictional project; no conversations or approval outcomes are presumed. — Personas!J68 [EXTRACTED]",
+          dashes: false,
+          width: 2,
+          color: { opacity: 0.7 },
+          confidence: "EXTRACTED",
+        },
+      ];
+      const LEGEND = [
+        {
+          cid: 0,
+          color: "#4E79A7",
+          label: "External / F06 colleagues",
+          count: 8,
+        },
+        {
+          cid: 1,
+          color: "#F28E2B",
+          label: "External / F07 colleagues",
+          count: 8,
+        },
+        { cid: 2, color: "#E15759", label: "F11 colleagues", count: 5 },
+        { cid: 3, color: "#76B7B2", label: "F08 colleagues", count: 5 },
+        { cid: 4, color: "#59A14F", label: "F09 colleagues", count: 5 },
+        { cid: 5, color: "#EDC948", label: "F05 colleagues", count: 5 },
+        { cid: 6, color: "#B07AA1", label: "F04 colleagues", count: 5 },
+        { cid: 7, color: "#FF9DA7", label: "F03 colleagues", count: 5 },
+        { cid: 8, color: "#9C755F", label: "F01 colleagues", count: 4 },
+        { cid: 9, color: "#BAB0AC", label: "F02 colleagues", count: 4 },
+        { cid: 10, color: "#4E79A7", label: "F12 colleagues", count: 4 },
+        { cid: 11, color: "#F28E2B", label: "F10 colleagues", count: 4 },
+        { cid: 12, color: "#E15759", label: "Unconnected persona", count: 1 },
+        { cid: 13, color: "#76B7B2", label: "Unconnected persona", count: 1 },
+        { cid: 14, color: "#59A14F", label: "Unconnected persona", count: 1 },
+        { cid: 15, color: "#EDC948", label: "Unconnected persona", count: 1 },
+      ];
+
+      // HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      // Build vis datasets
+      const nodesDS = new vis.DataSet(
+        RAW_NODES.map((n, i) => ({
+          id: n.id,
+          label: n.label.split(" (")[0],
+          color: { ...n.color, background: "#ffffff" },
+          size: n.size,
+          font: { ...n.font, size: 14, color: "#202020" },
+          title: n.title,
+          // Fermat/golden-angle spiral seed positions (#3699): spreading nodes out
+          // before physics runs keeps avoidOverlap from computing near-zero-distance
+          // repulsion that blows the BarnesHut recursion into a stack overflow on large
+          // graphs. `i` is the map index — physics still settles small graphs identically.
+          x: 30 * Math.sqrt(i) * Math.cos(i * 2.4),
+          y: 30 * Math.sqrt(i) * Math.sin(i * 2.4),
+          community: n.community,
+          community_name: n.community_name,
+          source_file: n.source_file,
+          file_type: n.file_type,
+          degree: n.degree,
+          member_count: n.member_count,
+        })),
+      );
+
+      const edgesDS = new vis.DataSet(
+        RAW_EDGES.map((e, i) => ({
+          id: i,
+          from: e.from,
+          to: e.to,
+          label: "",
+          title: esc(e.title),
+          dashes: e.dashes,
+          width: e.width,
+          color: e.color,
+          arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+        })),
+      );
+
+      const container = document.getElementById("graph");
+      const network = new vis.Network(
+        container,
+        { nodes: nodesDS, edges: edgesDS },
+        {
+          physics: {
+            enabled: true,
+            solver: "forceAtlas2Based",
+            forceAtlas2Based: {
+              gravitationalConstant: -60,
+              centralGravity: 0.005,
+              springLength: 120,
+              springConstant: 0.08,
+              damping: 0.4,
+              avoidOverlap: 0.8,
+            },
+            stabilization: { iterations: 200, fit: true },
+          },
+          interaction: {
+            hover: true,
+            tooltipDelay: 100,
+            hideEdgesOnDrag: true,
+            navigationButtons: false,
+            keyboard: false,
+          },
+          nodes: {
+            shape: "box",
+            borderWidth: 1,
+            shapeProperties: { borderRadius: 0 },
+            margin: 7,
+          },
+          edges: {
+            smooth: { type: "continuous", roundness: 0.2 },
+            selectionWidth: 3,
+          },
+        },
+      );
+
+      network.once("stabilizationIterationsDone", () => {
+        network.setOptions({ physics: { enabled: false } });
+      });
+
+      function showInfo(nodeId) {
+        const n = nodesDS.get(nodeId);
+        if (!n) return;
+        const neighborIds = network.getConnectedNodes(nodeId);
+        const neighborItems = neighborIds
+          .map((nid) => {
+            const nb = nodesDS.get(nid);
+            const color = nb ? nb.color.background : "#555";
+            return `<span class="neighbor-link" style="border-left-color:${esc(color)}" data-nid="${esc(nid)}">${esc(nb ? nb.label : nid)}</span>`;
+          })
+          .join("");
+        const isMetaNode = !n.file_type && !n.source_file;
+        let html = `<div class="field"><b>${esc(n.title || n.label)}</b></div>`;
+        if (!isMetaNode) {
+          html += `<div class="field">Type: ${esc(n.file_type || "unknown")}</div>`;
+        }
+        html += `<div class="field">Community: ${esc(n.community_name || "")}</div>`;
+        if (!isMetaNode) {
+          html += `<div class="field">Source: ${esc(n.source_file || "-")}</div>`;
+        } else if (n.member_count !== undefined && n.member_count !== null) {
+          html += `<div class="field">Members: ${esc(n.member_count)}</div>`;
+        }
+        html += `<div class="field">Degree: ${n.degree}</div>`;
+        if (neighborIds.length) {
+          html += `<div class="field" style="margin-top:8px;color:#686868;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>`;
+        }
+        document.getElementById("info-content").innerHTML = html;
+      }
+
+      function focusNode(nodeId) {
+        network.focus(nodeId, { scale: 1.4, animation: true });
+        network.selectNodes([nodeId]);
+        showInfo(nodeId);
+      }
+
+      // Neighbor links use a data attribute + one delegated listener rather than an
+      // inline onclick. A node id/label sourced from a document or a scraped URL
+      // (graphify add) can contain a double-quote; dropping the stringified id
+      // unescaped into a quoted onclick both broke every link and allowed a hostile
+      // source to inject an event handler into the local report (stored XSS, #1838).
+      // esc() on data-nid keeps the value inside the attribute; the listener reads it
+      // back verbatim. Bound to document so it survives the innerHTML rebuild that
+      // recreates #neighbors-list on each showInfo().
+      document.addEventListener("click", (e) => {
+        const el = e.target.closest(".neighbor-link");
+        if (el && el.dataset.nid !== undefined) focusNode(el.dataset.nid);
+      });
+
+      // Track hovered node — hover detection is more reliable than click params
+      let hoveredNodeId = null;
+      network.on("hoverNode", (params) => {
+        hoveredNodeId = params.node;
+        container.style.cursor = "pointer";
+      });
+      network.on("blurNode", () => {
+        hoveredNodeId = null;
+        container.style.cursor = "default";
+      });
+      container.addEventListener("click", () => {
+        if (hoveredNodeId !== null) {
+          showInfo(hoveredNodeId);
+          network.selectNodes([hoveredNodeId]);
+        }
+      });
+      network.on("click", (params) => {
+        if (params.nodes.length > 0) {
+          showInfo(params.nodes[0]);
+        } else if (hoveredNodeId === null) {
+          document.getElementById("info-content").innerHTML =
+            '<span class="empty">Click a node to inspect it</span>';
+        }
+      });
+
+      const searchInput = document.getElementById("search");
+      const searchResults = document.getElementById("search-results");
+      searchInput.addEventListener("input", () => {
+        const q = searchInput.value.toLowerCase().trim();
+        searchResults.innerHTML = "";
+        if (!q) {
+          searchResults.style.display = "none";
+          return;
+        }
+        const matches = RAW_NODES.filter((n) =>
+          n.label.toLowerCase().includes(q),
+        ).slice(0, 20);
+        if (!matches.length) {
+          searchResults.style.display = "none";
+          return;
+        }
+        searchResults.style.display = "block";
+        matches.forEach((n) => {
+          const el = document.createElement("div");
+          el.className = "search-item";
+          el.textContent = n.label;
+          el.style.borderLeft = `3px solid ${n.color.background}`;
+          el.style.paddingLeft = "8px";
+          el.onclick = () => {
+            network.focus(n.id, { scale: 1.5, animation: true });
+            network.selectNodes([n.id]);
+            showInfo(n.id);
+            searchResults.style.display = "none";
+            searchInput.value = "";
+          };
+          searchResults.appendChild(el);
+        });
+      });
+      document.addEventListener("click", (e) => {
+        if (!searchResults.contains(e.target) && e.target !== searchInput)
+          searchResults.style.display = "none";
+      });
+
+      document
+        .getElementById("fit-graph")
+        .addEventListener("click", () => network.fit());
+      const hiddenCommunities = new Set();
+
+      const selectAllCb = document.getElementById("select-all-cb");
+
+      function updateSelectAllState() {
+        const total = LEGEND.length;
+        const hidden = hiddenCommunities.size;
+        selectAllCb.checked = hidden === 0;
+        selectAllCb.indeterminate = hidden > 0 && hidden < total;
+      }
+
+      function toggleAllCommunities(hide) {
+        document.querySelectorAll(".legend-item").forEach((item) => {
+          hide ? item.classList.add("dimmed") : item.classList.remove("dimmed");
+        });
+        document.querySelectorAll(".legend-cb").forEach((cb) => {
+          cb.checked = !hide;
+        });
+        LEGEND.forEach((c) => {
+          if (hide) hiddenCommunities.add(c.cid);
+          else hiddenCommunities.delete(c.cid);
+        });
+        const updates = RAW_NODES.map((n) => ({ id: n.id, hidden: hide }));
+        nodesDS.update(updates);
+        updateSelectAllState();
+      }
+
+      const legendEl = document.getElementById("legend");
+      LEGEND.forEach((c) => {
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "legend-cb";
+        cb.checked = true;
+        cb.addEventListener("change", (e) => {
+          e.stopPropagation();
+          if (cb.checked) {
+            hiddenCommunities.delete(c.cid);
+            item.classList.remove("dimmed");
+          } else {
+            hiddenCommunities.add(c.cid);
+            item.classList.add("dimmed");
+          }
+          const updates = RAW_NODES.filter((n) => n.community === c.cid).map(
+            (n) => ({ id: n.id, hidden: !cb.checked }),
+          );
+          nodesDS.update(updates);
+          updateSelectAllState();
+        });
+        item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+    <span class="legend-label">${c.label}</span>
+    <span class="legend-count">${c.count}</span>`;
+        item.prepend(cb);
+        item.onclick = (e) => {
+          if (e.target === cb) return;
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event("change"));
+        };
+        legendEl.appendChild(item);
+      });
+    </script>
+    <script>
+      // Render hyperedges as shaded regions
+      const hyperedges = [];
+      // afterDrawing passes ctx already transformed to network coordinate space.
+      // Draw node positions raw — no manual pan/zoom/DPR math needed.
+
+      // Andrew's monotone chain. Returns the hull in counter-clockwise order, which
+      // is what the perimeter must be traced in. Collinear and duplicate points
+      // collapse to the extremes, so degenerate member sets render as a segment
+      // rather than a zero-area crossed path.
+      function convexHull(pts) {
+        const p = pts.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+        if (p.length < 3) return p;
+        const cross = (o, a, b) =>
+          (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+        const build = (seq) => {
+          const out = [];
+          for (const q of seq) {
+            while (
+              out.length >= 2 &&
+              cross(out[out.length - 2], out[out.length - 1], q) <= 0
+            )
+              out.pop();
+            out.push(q);
+          }
+          out.pop();
+          return out;
+        };
+        const hull = build(p).concat(build(p.slice().reverse()));
+        return hull.length >= 3 ? hull : p;
+      }
+      network.on("afterDrawing", function (ctx) {
+        hyperedges.forEach((h) => {
+          const positions = h.nodes
+            .map((nid) => network.getPositions([nid])[nid])
+            .filter((p) => p !== undefined);
+          if (positions.length < 2) return;
+          ctx.save();
+          ctx.globalAlpha = 0.12;
+          ctx.fillStyle = "#6366f1";
+          ctx.strokeStyle = "#6366f1";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          // Centroid and expanded hull in network coordinates.
+          // The perimeter must follow hull order, not h.nodes order: tracing the
+          // raw member order self-intersects whenever the layout does not happen
+          // to place members in angular order, filling as crossed wedges.
+          const cx = positions.reduce((s, p) => s + p.x, 0) / positions.length;
+          const cy = positions.reduce((s, p) => s + p.y, 0) / positions.length;
+          const hull = convexHull(positions);
+          const expanded = hull.map((p) => ({
+            x: cx + (p.x - cx) * 1.15,
+            y: cy + (p.y - cy) * 1.15,
+          }));
+          ctx.moveTo(expanded[0].x, expanded[0].y);
+          expanded.slice(1).forEach((p) => ctx.lineTo(p.x, p.y));
+          ctx.closePath();
+          ctx.fill();
+          ctx.globalAlpha = 0.4;
+          ctx.stroke();
+          // Label
+          ctx.globalAlpha = 0.8;
+          ctx.fillStyle = "#4f46e5";
+          ctx.font = "bold 11px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(h.label, cx, cy - 5);
+          ctx.restore();
+        });
+      });
+    </script>
+  </body>
+</html>

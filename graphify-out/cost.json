@@ -1,0 +1,11 @@
+{
+  "runs": [
+    {
+      "date": "2026-10-06T07:23:47.059865+00:00",
+      "input_tokens": null,
+      "output_tokens": null,
+      "files": 1,
+      "note": "Subagent token usage unavailable; no external provider API used."
+    }
+  ]
+}
