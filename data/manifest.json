@@ -1,0 +1,25 @@
+{
+  "workbook_sha256": "49647106a3513aae0ff53f7c70f230e29a3dabd2cfc751f7de02df569e64815e",
+  "sheets": {
+    "Verdicts": {
+      "rows": 66,
+      "columns": 15
+    },
+    "Interviews": {
+      "rows": 990,
+      "columns": 17
+    },
+    "Personas": {
+      "rows": 66,
+      "columns": 14
+    },
+    "Sources": {
+      "rows": 1394,
+      "columns": 10
+    },
+    "Prompts": {
+      "rows": 2688,
+      "columns": 8
+    }
+  }
+}
